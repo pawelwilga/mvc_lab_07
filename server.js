@@ -11,6 +11,7 @@ const homeRoutes = require("./routing/home");
 const { STATUS_CODE } = require("./constants/statusCode");
 const { MENU_LINKS } = require("./constants/navigation");
 const cartController = require("./controllers/cartController");
+const { mongoConnect } = require("./database"); // 👈 dodano
 
 const app = express();
 
@@ -22,7 +23,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use((request, _response, next) => {
   const { url, method } = request;
-
   logger.getInfoLog(url, method);
   next();
 });
@@ -44,4 +44,9 @@ app.use((request, response) => {
   logger.getErrorLog(url);
 });
 
-app.listen(PORT);
+// 👇 Najpierw łączymy się z MongoDB, potem uruchamiamy Express
+mongoConnect(() => {
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+});
