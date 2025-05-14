@@ -1,15 +1,18 @@
 const { MENU_LINKS } = require("../constants/navigation");
-
 const cartController = require("./cartController");
 
-exports.getHomeView = (request, response) => {
-  const cartCount = cartController.getProductsCount();
+exports.getHomeView = async (request, response) => {
+  try {
+    const cartCount = await cartController.getProductsCount();
 
-  response.render("home.ejs", {
-    headTitle: "Shop - Home",
-    path: "/",
-    activeLinkPath: "/",
-    menuLinks: MENU_LINKS,
-    cartCount,
-  });
+    response.render("home.ejs", {
+      headTitle: "Shop - Home",
+      path: "/",
+      activeLinkPath: "/",
+      menuLinks: MENU_LINKS,
+      cartCount,
+    });
+  } catch (error) {
+    response.status(500).send("Internal Server Error");
+  }
 };
